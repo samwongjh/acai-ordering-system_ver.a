@@ -246,7 +246,7 @@ export function ItemCustomizationSheet({
             onClick={handleConfirm}
             className="flex-1 h-12 rounded-xl bg-[#1C1523] hover:bg-[#5B2378] text-white font-semibold text-sm flex items-center justify-between px-4 transition-colors active:scale-[0.99] cursor-pointer"
           >
-            <span>Add to Basket</span>
+            <span>Add to Cart</span>
             <span className="font-mono tabular-nums">S${lineTotal.toFixed(2)}</span>
           </button>
         </div>

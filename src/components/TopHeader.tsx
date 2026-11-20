@@ -98,7 +98,7 @@ export function TopHeader({
             </button>
           )}
 
-          {/* Mobile compact action: Basket / Account */}
+          {/* Mobile compact action: Cart / Account */}
           <div className="flex md:hidden items-center gap-1.5">
             <button
               type="button"
@@ -111,7 +111,7 @@ export function TopHeader({
             <button
               type="button"
               onClick={onOpenMobileCart}
-              aria-label="Open Basket"
+              aria-label="Open Cart"
               className="relative min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl text-[#1C1523] hover:bg-[#F3EFEA] transition-colors cursor-pointer"
             >
               <ShoppingBag className="w-5 h-5" />

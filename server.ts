@@ -600,7 +600,7 @@ async function startServer() {
     };
 
     if (!Array.isArray(body.items) || body.items.length === 0) {
-      res.status(400).json({ error: 'Your basket is empty.' });
+      res.status(400).json({ error: 'Your cart is empty.' });
       return;
     }
     if (!body.customer?.name?.trim() || !body.customer?.phone?.trim()) {

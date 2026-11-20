@@ -145,7 +145,7 @@ export default function App() {
   const handleAddToCart = useCallback(
     (newItem: CartItem) => {
       setCart((prev) => [...prev, newItem]);
-      showToast(`Added ${newItem.name} to basket`);
+      showToast(`Added ${newItem.name} to cart`);
     },
     [showToast]
   );
@@ -309,7 +309,7 @@ export default function App() {
                   />
                 </div>
 
-                {/* Desktop Sticky Qlub Basket & Checkout Sidebar */}
+                {/* Desktop Sticky Qlub Cart & Checkout Sidebar */}
                 <aside className="hidden lg:block lg:col-span-4 sticky top-[178px] h-[calc(100vh-198px)]">
                   <CartCheckoutPanel
                     items={cart}
@@ -322,6 +322,7 @@ export default function App() {
                     onQuickAddUpsell={handleQuickAddItem}
                     member={member}
                     authToken={authToken}
+                    onOpenSignUp={() => openAuthModal('register')}
                     onAuthSuccess={handleAuthSuccess}
                     onOrderCreated={handleOrderCreated}
                   />
@@ -396,7 +397,7 @@ export default function App() {
             >
               <span className="flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4" />
-                <span>View Basket ({cartCount})</span>
+                <span>View Cart ({cartCount})</span>
               </span>
               <span className="font-mono tabular-nums">S${cartSubtotal.toFixed(2)}</span>
             </button>
@@ -437,13 +438,13 @@ export default function App() {
         )}
       </div>
 
-      {/* Mobile Full-Height Basket & Checkout Sheet */}
+      {/* Mobile Full-Height Cart & Checkout Sheet */}
       {mobileCartOpen && (
         <div
           className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end"
           role="dialog"
           aria-modal="true"
-          aria-label="Basket and checkout"
+          aria-label="Cart and checkout"
           onClick={() => setMobileCartOpen(false)}
         >
           <div
@@ -461,6 +462,7 @@ export default function App() {
               onQuickAddUpsell={handleQuickAddItem}
               member={member}
               authToken={authToken}
+              onOpenSignUp={() => openAuthModal('register')}
               onAuthSuccess={handleAuthSuccess}
               onOrderCreated={handleOrderCreated}
               onCloseMobile={() => setMobileCartOpen(false)}

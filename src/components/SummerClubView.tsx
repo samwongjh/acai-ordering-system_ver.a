@@ -1,16 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
 import {
   Award,
   Check,
   Clock,
-  Crown,
   LogOut,
   MapPin,
   RotateCcw,
-  Shield,
   UserCheck,
 } from 'lucide-react';
 import type { MemberAccount, Order } from '../types.ts';
+import { LegendMascot, RecruitMascot, WarriorMascot } from './BellyMascots.tsx';
 
 interface SummerClubViewProps {
   member: MemberAccount | null;
@@ -28,7 +27,7 @@ interface BellyTierDefinition {
   earnRate: string;
   summary: string;
   perks: string[];
-  icon: typeof Award;
+  mascot: ComponentType<{ className?: string }>;
 }
 
 const BELLY_TIERS: BellyTierDefinition[] = [
@@ -37,7 +36,7 @@ const BELLY_TIERS: BellyTierDefinition[] = [
     pointsRange: '0 – 399 pts',
     earnRate: '10 pts per S$1',
     summary: 'Your entry pass into Belly Tribe rewards from day one.',
-    icon: Shield,
+    mascot: RecruitMascot,
     perks: [
       '150 welcome Belly Points upon registration',
       'Earn 10 Belly Points per S$1.00 spent',
@@ -50,7 +49,7 @@ const BELLY_TIERS: BellyTierDefinition[] = [
     pointsRange: '400 – 999 pts',
     earnRate: '12.5 pts per S$1',
     summary: 'Accelerated points earning and priority express counter pick-up.',
-    icon: Award,
+    mascot: WarriorMascot,
     perks: [
       'All Belly Recruit perks included',
       '1.25× Belly Points multiplier (12.5 pts per S$1.00 spent)',
@@ -63,7 +62,7 @@ const BELLY_TIERS: BellyTierDefinition[] = [
     pointsRange: '1,000+ pts',
     earnRate: '15 pts per S$1',
     summary: 'Top-tier BellyBelly Good privileges with free island-wide delivery.',
-    icon: Crown,
+    mascot: LegendMascot,
     perks: [
       'All Belly Warrior perks included',
       '1.5× Belly Points multiplier (15 pts per S$1.00 spent)',
@@ -88,7 +87,7 @@ function BellyTierShowcase({ currentTier }: { currentTier?: MemberAccount['tier'
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {BELLY_TIERS.map((tier) => {
-          const Icon = tier.icon;
+          const Mascot = tier.mascot;
           const isCurrent = currentTier === tier.name;
           return (
             <article
@@ -101,8 +100,8 @@ function BellyTierShowcase({ currentTier }: { currentTier?: MemberAccount['tier'
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-[#F3EFEA] text-[#5B2378] flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-2xl bg-[#F3EFEA] flex items-center justify-center shrink-0">
+                    <Mascot className="w-9 h-9" />
                   </div>
                   <div className="text-right">
                     <p className="font-mono text-xs font-semibold text-[#1C1523] tabular-nums">

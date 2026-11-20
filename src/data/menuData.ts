@@ -29,7 +29,7 @@ export const OUTLET_INFO: OutletInfo = {
     {
       code: 'BELLY5',
       label: 'S$5.00 Off Orders S$25+',
-      detail: 'Enjoy S$5 off when your basket subtotal reaches S$25.00.',
+      detail: 'Enjoy S$5 off when your cart subtotal reaches S$25.00.',
     },
   ],
 };

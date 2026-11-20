@@ -124,7 +124,7 @@ export function MenuGrid({
                         )}
                         {countInCart > 0 && (
                           <span className="text-xs font-semibold text-[#5B2378] tabular-nums">
-                            · {countInCart} in basket
+                            · {countInCart} in cart
                           </span>
                         )}
                       </div>
