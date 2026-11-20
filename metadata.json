@@ -1,0 +1,8 @@
+{
+  "name": "The Summer Açaí — Punggol Coast",
+  "description": "Mobile-first QSR ordering for The Summer Açaí Punggol Coast. Order signature açaí bowls, DIY creations, and Thirst Trap beverages for pick-up or delivery with membership rewards and real-time order tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
