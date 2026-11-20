@@ -34,3 +34,7 @@ A chronological record of the prompts used to build and iterate on the **BellyBe
     })(window, document, "clarity", "script", "zgi74gt88t");
 </script>
 ```
+
+16. Put the pasted code into `src/pt.ts` (keeping `SUPABASE_URL` and `SUPABASE_KEY` as-is), keep the app front-end only (no `server.ts`, Express, Gemini calls, or secrets), implement version A vs B with the single tested element ("Encourage customers to sign up as members" shown only when `variant() === "B"`, main button `Join now` calling `track("cta_click")`, `track("screen_view")` once on render, `track("goal_complete")` on checkout sign-up), show the bottom consent notice with equal `Accept` / `Decline` buttons, call `loadClarity()` when consent is granted, remove the Clarity script from `index.html`, and add no other tracking, timer, counter, or pop-up.
+17. Provided the `src/pt.ts` source code (`trigger_test` experiment, Clarity loader, visitor ID, consent, Supabase event tracking, and Supabase Auth helpers).
+18. commit all changes to github and collate all prompts under prompts.md filename

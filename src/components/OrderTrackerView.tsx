@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import {
   Bike,
   CheckCircle2,
@@ -10,6 +10,7 @@ import {
   Store,
 } from 'lucide-react';
 import type { Order } from '../types.ts';
+import { advanceOrderStage, lookupOrder } from '../data/localStore.ts';
 import { FoodImage } from './FoodImage.tsx';
 
 interface OrderTrackerViewProps {
@@ -26,65 +27,29 @@ export function OrderTrackerView({
   const [lookupInput, setLookupInput] = useState('');
   const [lookupError, setLookupError] = useState('');
   const [advancing, setAdvancing] = useState(false);
-  const [streamConnected, setStreamConnected] = useState(false);
 
-  // Connect real-time SSE stream whenever activeOrder changes
-  useEffect(() => {
-    if (!activeOrder?.id || activeOrder.status === 'completed') {
-      setStreamConnected(false);
-      return;
-    }
-
-    const source = new EventSource(`/api/orders/${encodeURIComponent(activeOrder.id)}/stream`);
-    source.onopen = () => setStreamConnected(true);
-    source.onmessage = (event) => {
-      try {
-        const updated = JSON.parse(event.data) as Order;
-        onUpdateOrder(updated);
-      } catch {
-        // Ignore malformed frame
-      }
-    };
-    source.onerror = () => {
-      setStreamConnected(false);
-    };
-
-    return () => {
-      source.close();
-      setStreamConnected(false);
-    };
-  }, [activeOrder?.id, activeOrder?.status, onUpdateOrder]);
-
-  const handleLookup = async (e: FormEvent) => {
+  const handleLookup = (e: FormEvent) => {
     e.preventDefault();
     setLookupError('');
     const q = lookupInput.trim();
     if (!q) return;
-    try {
-      const res = await fetch(`/api/orders/lookup/${encodeURIComponent(q)}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Order not found');
-      onUpdateOrder(data.order);
-      setLookupInput('');
-    } catch (err) {
-      setLookupError(err instanceof Error ? err.message : 'Unable to find order');
+    const found = lookupOrder(q);
+    if (!found) {
+      setLookupError(`No order found matching "${q}".`);
+      return;
     }
+    onUpdateOrder(found);
+    setLookupInput('');
   };
 
-  const handleSimulateAdvance = async () => {
+  const handleSimulateAdvance = () => {
     if (!activeOrder) return;
     setAdvancing(true);
-    try {
-      const res = await fetch(`/api/orders/${encodeURIComponent(activeOrder.id)}/advance`, {
-        method: 'POST',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        onUpdateOrder(data.order);
-      }
-    } finally {
-      setAdvancing(false);
+    const updated = advanceOrderStage(activeOrder.id);
+    if (updated) {
+      onUpdateOrder(updated);
     }
+    setAdvancing(false);
   };
 
   return (
@@ -160,15 +125,6 @@ export function OrderTrackerView({
                     <span>
                       {activeOrder.fulfillmentMode === 'pickup' ? 'Self Pick-Up' : 'Island Delivery'}
                     </span>
-                    {streamConnected && activeOrder.status !== 'completed' && (
-                      <>
-                        <span aria-hidden="true">·</span>
-                        <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                          Live Updates
-                        </span>
-                      </>
-                    )}
                   </div>
                   <h2 className="mt-1 font-display text-2xl font-bold text-[#1C1523]">
                     {activeOrder.estimatedTimeLabel}
@@ -295,7 +251,7 @@ export function OrderTrackerView({
               {activeOrder.status !== 'completed' && (
                 <div className="mt-6 pt-4 border-t border-[#1C1523]/8 flex flex-wrap items-center justify-between gap-3">
                   <span className="text-xs text-[#665E6E]">
-                    Stages auto-advance live every ~9s via server stream
+                    Tap Advance Next Stage to simulate kitchen &amp; delivery updates
                   </span>
                   <button
                     type="button"

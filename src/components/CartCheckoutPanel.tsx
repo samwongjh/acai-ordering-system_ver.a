@@ -26,6 +26,8 @@ import type {
   PaymentMethod,
 } from '../types.ts';
 import { OUTLET_INFO } from '../data/menuData.ts';
+import { createOrder, loginMember, registerMember } from '../data/localStore.ts';
+import { track, type Variant } from '../pt.ts';
 import { FoodImage } from './FoodImage.tsx';
 
 type CheckoutStep = 'cart' | 'identity' | 'payment';
@@ -41,6 +43,7 @@ interface CartCheckoutPanelProps {
   onQuickAddUpsell: (item: MenuItem) => void;
   member: MemberAccount | null;
   authToken: string | null;
+  abVariant: Variant;
   onOpenSignUp: () => void;
   onAuthSuccess: (member: MemberAccount, token: string) => void;
   onOrderCreated: (order: Order, updatedMember: MemberAccount | null) => void;
@@ -57,6 +60,7 @@ export function CartCheckoutPanel({
   onQuickAddUpsell,
   member,
   authToken,
+  abVariant,
   onOpenSignUp,
   onAuthSuccess,
   onOrderCreated,
@@ -195,13 +199,7 @@ export function CartCheckoutPanel({
     setAuthLoading(true);
     setAuthError('');
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ demo: true }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Demo sign-in failed');
+      const data = await loginMember({ demo: true });
       onAuthSuccess(data.member, data.token);
       syncMemberFields(data.member);
     } catch (err) {
@@ -216,20 +214,21 @@ export function CartCheckoutPanel({
     setAuthLoading(true);
     setAuthError('');
     try {
-      const endpoint = authTab === 'login' ? '/api/auth/login' : '/api/auth/register';
-      const payload =
-        authTab === 'login'
-          ? { identifier: loginIdentifier, password: loginPassword }
-          : { name: regName, email: regEmail, phone: regPhone, password: regPassword };
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Authentication failed');
-      onAuthSuccess(data.member, data.token);
-      syncMemberFields(data.member);
+      if (authTab === 'login') {
+        const data = await loginMember({ identifier: loginIdentifier, password: loginPassword });
+        onAuthSuccess(data.member, data.token);
+        syncMemberFields(data.member);
+      } else {
+        const data = await registerMember({
+          name: regName,
+          email: regEmail,
+          phone: regPhone,
+          password: regPassword,
+        });
+        track('goal_complete', { source: 'checkout_identity' });
+        onAuthSuccess(data.member, data.token);
+        syncMemberFields(data.member);
+      }
     } catch (err) {
       setAuthError(err instanceof Error ? err.message : 'Authentication error');
     } finally {
@@ -266,7 +265,7 @@ export function CartCheckoutPanel({
     const useMember = Boolean(member && checkoutIdentityMode === 'member');
     const customer: CustomerCheckoutInfo = {
       isGuest: !useMember,
-      memberId: useMember ? member?.id : undefined,
+      memberId: useMember && authToken ? member?.id : undefined,
       name: (useMember ? member!.name : contactName).trim(),
       phone: (useMember ? member!.phone : contactPhone).trim(),
       email: (useMember ? member!.email : contactEmail).trim() || 'guest@bellybellygood.sg',
@@ -283,25 +282,15 @@ export function CartCheckoutPanel({
     };
 
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (useMember && authToken) {
-        headers.Authorization = `Bearer ${authToken}`;
-      }
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          fulfillmentMode,
-          items,
-          customer,
-          paymentMethod,
-          utensilsIncluded,
-          promoCode: appliedPromo,
-          redeemPoints: useMember && redeemPoints,
-        }),
+      const data = createOrder({
+        fulfillmentMode,
+        items,
+        customer,
+        paymentMethod,
+        utensilsIncluded,
+        promoCode: appliedPromo,
+        redeemPoints: useMember && redeemPoints,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not place order');
       setStep('cart');
       setAppliedPromo(null);
       setRedeemPoints(false);
@@ -366,14 +355,40 @@ export function CartCheckoutPanel({
 
       {/* Empty State */}
       {items.length === 0 ? (
-        <div className="p-8 text-center flex-1 flex flex-col items-center justify-center">
-          <div className="w-12 h-12 rounded-2xl bg-[#F3EFEA] flex items-center justify-center text-[#5B2378] mb-3">
-            <ShoppingCart className="w-6 h-6" />
+        <div className="p-6 text-center flex-1 flex flex-col items-center justify-center gap-5">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-2xl bg-[#F3EFEA] flex items-center justify-center text-[#5B2378] mb-3">
+              <ShoppingCart className="w-6 h-6" />
+            </div>
+            <p className="font-display text-base font-bold text-[#1C1523]">Your cart is empty</p>
+            <p className="mt-1 text-xs text-[#665E6E] max-w-[230px]">
+              Tap any signature açaí bowl or Thirst Trap beverage to build your order.
+            </p>
           </div>
-          <p className="font-display text-base font-bold text-[#1C1523]">Your cart is empty</p>
-          <p className="mt-1 text-xs text-[#665E6E] max-w-[230px]">
-            Tap any signature açaí bowl or Thirst Trap beverage to build your order.
-          </p>
+
+          {abVariant === 'B' && !member && (
+            <div className="w-full rounded-xl border border-[#5B2378]/25 bg-[#5B2378]/5 p-3.5 text-left space-y-2.5">
+              <div>
+                <p className="text-xs font-bold text-[#1C1523]">
+                  Save 15%+ as a Belly Tribe member
+                </p>
+                <p className="text-[11px] text-[#665E6E] mt-0.5 leading-relaxed">
+                  Free sign-up · Get 150 welcome pts (S$1.50 value) + earn 10% back in points on every order.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  track('cta_click', { location: 'cart_empty' });
+                  onOpenSignUp();
+                }}
+                className="w-full min-h-[42px] px-4 py-2 rounded-xl bg-[#5B2378] hover:bg-[#491B61] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <UserPlus className="w-3.5 h-3.5 shrink-0" />
+                <span>Join now</span>
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -1005,21 +1020,31 @@ export function CartCheckoutPanel({
             </div>
 
             {step === 'cart' && (
-              <div className="space-y-2">
-                {!member && (
-                  <button
-                    type="button"
-                    onClick={onOpenSignUp}
-                    className="w-full min-h-[44px] px-4 py-2 rounded-xl border border-[#5B2378]/30 bg-[#5B2378]/8 hover:bg-[#5B2378]/14 text-[#5B2378] text-xs font-semibold flex items-center justify-between gap-2 transition-colors cursor-pointer"
-                  >
-                    <span className="flex items-center gap-2 min-w-0 truncate">
+              <div className="space-y-2.5">
+                {abVariant === 'B' && !member && (
+                  <div className="rounded-xl border border-[#5B2378]/25 bg-[#5B2378]/5 p-3 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-[#1C1523]">
+                          Save {signUpSavingsPct}% on this order as a member
+                        </p>
+                        <p className="text-[11px] text-[#665E6E] mt-0.5">
+                          Free sign-up · 150 welcome pts (S$1.50) + 10% back
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        track('cta_click', { location: 'cart_checkout' });
+                        onOpenSignUp();
+                      }}
+                      className="w-full min-h-[42px] px-4 py-2 rounded-xl bg-[#5B2378] hover:bg-[#491B61] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
                       <UserPlus className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Sign Up to Belly Tribe</span>
-                    </span>
-                    <span className="font-mono font-bold tabular-nums shrink-0">
-                      Save {signUpSavingsPct}%
-                    </span>
-                  </button>
+                      <span>Join now</span>
+                    </button>
+                  </div>
                 )}
 
                 <button

@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Sparkles, X } from 'lucide-react';
 import type { MemberAccount } from '../types.ts';
+import { loginMember, registerMember } from '../data/localStore.ts';
+import { track } from '../pt.ts';
 
 interface AuthModalProps {
   open: boolean;
@@ -37,13 +39,7 @@ export function AuthModal({
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ demo: true }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Login failed');
+      const data = await loginMember({ demo: true });
       onAuthSuccess(data.member, data.token);
       onClose();
     } catch (err) {
@@ -58,19 +54,14 @@ export function AuthModal({
     setLoading(true);
     setError('');
     try {
-      const url = tab === 'login' ? '/api/auth/login' : '/api/auth/register';
-      const body =
-        tab === 'login'
-          ? { identifier, password }
-          : { name, email, phone, password };
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Authentication error');
-      onAuthSuccess(data.member, data.token);
+      if (tab === 'login') {
+        const data = await loginMember({ identifier, password });
+        onAuthSuccess(data.member, data.token);
+      } else {
+        const data = await registerMember({ name, email, phone, password });
+        track('goal_complete', { source: 'auth_modal' });
+        onAuthSuccess(data.member, data.token);
+      }
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication error');

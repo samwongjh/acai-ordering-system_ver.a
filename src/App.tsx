@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Clock, ShoppingCart, Tag, UtensilsCrossed, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Clock, ShoppingCart, Tag, UserPlus, UtensilsCrossed, X } from 'lucide-react';
+import { variant, track, consent, setConsent, loadClarity } from './pt';
 import type {
   CartItem,
   FulfillmentMode,
@@ -9,6 +10,7 @@ import type {
   Order,
 } from './types.ts';
 import { MENU_CATEGORIES, MENU_ITEMS, OUTLET_INFO } from './data/menuData.ts';
+import { getOrderById, logoutMember, restoreActiveMember } from './data/localStore.ts';
 import { TopHeader, type AppView } from './components/TopHeader.tsx';
 import { BellyClubSubHeader } from './components/BellyClubSubHeader.tsx';
 import { OutletHeroBanner } from './components/OutletHeroBanner.tsx';
@@ -26,6 +28,10 @@ const STORAGE_TOKEN_KEY = 'bellybelly_token_v1';
 const STORAGE_ACTIVE_ORDER_KEY = 'bellybelly_active_order_id_v1';
 
 export default function App() {
+  const [abVariant] = useState(() => variant());
+  const [consentChoice, setConsentChoice] = useState<'granted' | 'denied' | null>(() => consent());
+  const screenViewTrackedRef = useRef(false);
+
   const [activeView, setActiveView] = useState<AppView>('menu');
   const [fulfillmentMode, setFulfillmentMode] = useState<FulfillmentMode>('pickup');
   const [activeCategory, setActiveCategory] = useState<MenuCategoryId>('all');
@@ -47,14 +53,32 @@ export default function App() {
       return null;
     }
   });
-  const [member, setMember] = useState<MemberAccount | null>(null);
+  const [member, setMember] = useState<MemberAccount | null>(() => restoreActiveMember());
 
-  const [activeOrder, setActiveOrder] = useState<Order | null>(null);
+  const [activeOrder, setActiveOrder] = useState<Order | null>(() => {
+    try {
+      const savedOrderId = localStorage.getItem(STORAGE_ACTIVE_ORDER_KEY);
+      return savedOrderId ? getOrderById(savedOrderId) : null;
+    } catch {
+      return null;
+    }
+  });
   const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
   const [mobileCartOpen, setMobileCartOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Load Clarity if consent already granted, and track screen_view once on initial render
+  useEffect(() => {
+    if (consent() === 'granted') {
+      loadClarity();
+    }
+    if (!screenViewTrackedRef.current) {
+      screenViewTrackedRef.current = true;
+      track('screen_view');
+    }
+  }, []);
 
   const openAuthModal = useCallback((mode: 'login' | 'register') => {
     setAuthModalMode(mode);
@@ -63,9 +87,6 @@ export default function App() {
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage((prev) => (prev === msg ? null : prev));
-    }, 2600);
   }, []);
 
   // Persist cart
@@ -76,40 +97,6 @@ export default function App() {
       // Ignore storage quota errors
     }
   }, [cart]);
-
-  // Restore member session if token exists
-  useEffect(() => {
-    if (!authToken) return;
-    fetch('/api/auth/me', {
-      headers: { Authorization: `Bearer ${authToken}` },
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.member) {
-          setMember(data.member);
-        } else {
-          setAuthToken(null);
-          localStorage.removeItem(STORAGE_TOKEN_KEY);
-        }
-      })
-      .catch(() => {});
-  }, [authToken]);
-
-  // Restore last active order if present
-  useEffect(() => {
-    try {
-      const savedOrderId = localStorage.getItem(STORAGE_ACTIVE_ORDER_KEY);
-      if (!savedOrderId) return;
-      fetch(`/api/orders/${encodeURIComponent(savedOrderId)}`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data?.order) setActiveOrder(data.order);
-        })
-        .catch(() => {});
-    } catch {
-      // Ignore
-    }
-  }, []);
 
   const handleAuthSuccess = useCallback(
     (loggedInMember: MemberAccount, token: string) => {
@@ -125,13 +112,8 @@ export default function App() {
     [showToast]
   );
 
-  const handleLogout = useCallback(async () => {
-    if (authToken) {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${authToken}` },
-      }).catch(() => {});
-    }
+  const handleLogout = useCallback(() => {
+    logoutMember();
     setMember(null);
     setAuthToken(null);
     try {
@@ -140,7 +122,7 @@ export default function App() {
       // Ignore
     }
     showToast('Signed out');
-  }, [authToken, showToast]);
+  }, [showToast]);
 
   const handleAddToCart = useCallback(
     (newItem: CartItem) => {
@@ -278,7 +260,7 @@ export default function App() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 pb-20 md:pb-12">
+      <main className={`flex-1 ${consentChoice === null ? 'pb-40 md:pb-24' : 'pb-20 md:pb-12'}`}>
         {activeView === 'menu' && (
           <>
             <OutletHeroBanner
@@ -298,7 +280,32 @@ export default function App() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
                 {/* Left / Main Menu Feed */}
-                <div className="lg:col-span-8">
+                <div className="lg:col-span-8 space-y-6">
+                  {/* Mobile/Tablet Version B trigger (desktop sees this inside sticky Cart panel) */}
+                  {abVariant === 'B' && !member && (
+                    <div className="lg:hidden rounded-2xl border border-[#5B2378]/25 bg-[#5B2378]/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-[#1C1523]">
+                          Save 15%+ as a Belly Tribe member
+                        </p>
+                        <p className="text-xs text-[#665E6E] mt-0.5">
+                          Free sign-up · Get 150 welcome pts (S$1.50 value) + earn 10% back in points on every order.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          track('cta_click', { location: 'mobile_menu_banner' });
+                          openAuthModal('register');
+                        }}
+                        className="min-h-[42px] px-5 py-2 rounded-xl bg-[#5B2378] hover:bg-[#491B61] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer whitespace-nowrap"
+                      >
+                        <UserPlus className="w-3.5 h-3.5 shrink-0" />
+                        <span>Join now</span>
+                      </button>
+                    </div>
+                  )}
+
                   <MenuGrid
                     items={MENU_ITEMS}
                     activeCategory={activeCategory}
@@ -322,6 +329,7 @@ export default function App() {
                     onQuickAddUpsell={handleQuickAddItem}
                     member={member}
                     authToken={authToken}
+                    abVariant={abVariant}
                     onOpenSignUp={() => openAuthModal('register')}
                     onAuthSuccess={handleAuthSuccess}
                     onOrderCreated={handleOrderCreated}
@@ -462,6 +470,7 @@ export default function App() {
               onQuickAddUpsell={handleQuickAddItem}
               member={member}
               authToken={authToken}
+              abVariant={abVariant}
               onOpenSignUp={() => openAuthModal('register')}
               onAuthSuccess={handleAuthSuccess}
               onOrderCreated={handleOrderCreated}
@@ -490,7 +499,7 @@ export default function App() {
       {toastMessage && (
         <div
           role="status"
-          className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-[#1C1523] text-white text-xs font-medium shadow-lg flex items-center gap-3 whitespace-nowrap"
+          className={`fixed ${consentChoice === null ? 'bottom-36 md:bottom-20' : 'bottom-20 md:bottom-6'} left-1/2 -translate-x-1/2 z-40 px-4 py-2.5 rounded-xl bg-[#1C1523] text-white text-xs font-medium shadow-lg flex items-center gap-3 whitespace-nowrap`}
         >
           <span>{toastMessage}</span>
           <button
@@ -501,6 +510,43 @@ export default function App() {
           >
             <X className="w-3.5 h-3.5" />
           </button>
+        </div>
+      )}
+
+      {/* Study Consent Notice */}
+      {consentChoice === null && (
+        <div
+          role="region"
+          aria-label="Study consent notice"
+          className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#1C1523]/15 shadow-lg"
+        >
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-[#1C1523] leading-relaxed">
+              This class prototype records which version you saw and what you pressed, to test a design. Nothing about your visit leaves this browser unless you agree.
+            </p>
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setConsent('granted');
+                  setConsentChoice('granted');
+                }}
+                className="min-h-[44px] min-w-[104px] px-5 py-2.5 rounded-xl bg-[#1C1523] hover:bg-[#5B2378] text-white text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
+              >
+                Accept
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setConsent('denied');
+                  setConsentChoice('denied');
+                }}
+                className="min-h-[44px] min-w-[104px] px-5 py-2.5 rounded-xl bg-[#1C1523] hover:bg-[#5B2378] text-white text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
+              >
+                Decline
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
