@@ -63,17 +63,6 @@ export function TopHeader({
           </button>
           <button
             type="button"
-            onClick={() => onChangeView('club')}
-            className={`py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
-              activeView === 'club'
-                ? 'text-[#1C1523] border-[#5B2378] font-semibold'
-                : 'border-transparent hover:text-[#1C1523]'
-            }`}
-          >
-            Belly Club
-          </button>
-          <button
-            type="button"
             onClick={() => onChangeView('promotions')}
             className={`py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
               activeView === 'promotions'

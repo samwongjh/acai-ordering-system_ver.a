@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Award, Clock, ShoppingBag, Tag, UtensilsCrossed, X } from 'lucide-react';
+import { Clock, ShoppingBag, Tag, UtensilsCrossed, X } from 'lucide-react';
 import type {
   CartItem,
   FulfillmentMode,
@@ -10,6 +10,7 @@ import type {
 } from './types.ts';
 import { MENU_CATEGORIES, MENU_ITEMS, OUTLET_INFO } from './data/menuData.ts';
 import { TopHeader, type AppView } from './components/TopHeader.tsx';
+import { BellyClubSubHeader } from './components/BellyClubSubHeader.tsx';
 import { OutletHeroBanner } from './components/OutletHeroBanner.tsx';
 import { CategoryTabs } from './components/CategoryTabs.tsx';
 import { MenuGrid } from './components/MenuGrid.tsx';
@@ -52,7 +53,13 @@ export default function App() {
   const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
   const [mobileCartOpen, setMobileCartOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const openAuthModal = useCallback((mode: 'login' | 'register') => {
+    setAuthModalMode(mode);
+    setAuthModalOpen(true);
+  }, []);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -255,11 +262,18 @@ export default function App() {
       <TopHeader
         activeView={activeView}
         onChangeView={setActiveView}
-        onOpenAuthModal={() => setAuthModalOpen(true)}
+        onOpenAuthModal={() => openAuthModal('login')}
         onOpenMobileCart={() => setMobileCartOpen(true)}
         member={member}
         cartCount={cartCount}
         hasActiveOrder={Boolean(activeOrder && activeOrder.status !== 'completed')}
+      />
+
+      <BellyClubSubHeader
+        member={member}
+        isClubActive={activeView === 'club'}
+        onOpenBellyClub={() => setActiveView('club')}
+        onOpenSignUp={() => openAuthModal('register')}
       />
 
       {/* Main Content */}
@@ -328,7 +342,8 @@ export default function App() {
           <SummerClubView
             member={member}
             authToken={authToken}
-            onAuthSuccess={handleAuthSuccess}
+            onOpenSignUp={() => openAuthModal('register')}
+            onOpenSignIn={() => openAuthModal('login')}
             onLogout={handleLogout}
             onTrackOrder={(ord) => {
               setActiveOrder(ord);
@@ -386,7 +401,7 @@ export default function App() {
             </button>
           </div>
         ) : (
-          <nav className="grid grid-cols-4 h-[56px]" aria-label="Mobile navigation">
+          <nav className="grid grid-cols-3 h-[56px]" aria-label="Mobile navigation">
             <button
               type="button"
               onClick={() => setActiveView('menu')}
@@ -416,16 +431,6 @@ export default function App() {
             >
               <Clock className="w-5 h-5" />
               <span>Track Order</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveView('club')}
-              className={`flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium cursor-pointer ${
-                activeView === 'club' ? 'text-[#5B2378] font-semibold' : 'text-[#665E6E]'
-              }`}
-            >
-              <Award className="w-5 h-5" />
-              <span>Belly Club</span>
             </button>
           </nav>
         )}
@@ -470,9 +475,10 @@ export default function App() {
         onAddToCart={handleAddToCart}
       />
 
-      {/* Member Sign In Modal */}
+      {/* Member Sign In / Sign Up Modal */}
       <AuthModal
         open={authModalOpen}
+        initialTab={authModalMode}
         onClose={() => setAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
       />

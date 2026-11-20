@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Award,
   Check,
@@ -8,7 +8,6 @@ import {
   MapPin,
   RotateCcw,
   Shield,
-  Sparkles,
   UserCheck,
 } from 'lucide-react';
 import type { MemberAccount, Order } from '../types.ts';
@@ -16,7 +15,8 @@ import type { MemberAccount, Order } from '../types.ts';
 interface SummerClubViewProps {
   member: MemberAccount | null;
   authToken: string | null;
-  onAuthSuccess: (member: MemberAccount, token: string) => void;
+  onOpenSignUp: () => void;
+  onOpenSignIn: () => void;
   onLogout: () => void;
   onTrackOrder: (order: Order) => void;
   onReorder: (order: Order) => void;
@@ -78,9 +78,9 @@ function BellyTierShowcase({ currentTier }: { currentTier?: MemberAccount['tier'
     <section aria-labelledby="belly-tiers-heading" className="space-y-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <p className="text-xs font-semibold text-[#5B2378]">Membership Tiers</p>
+          <p className="text-xs font-semibold text-[#5B2378]">3-Tier Rewards Programme</p>
           <h2 id="belly-tiers-heading" className="font-display text-xl font-bold text-[#1C1523]">
-            Belly Club Perks &amp; Progression
+            From Belly Recruit to Belly Legend
           </h2>
         </div>
         <span className="text-xs text-[#665E6E]">100 Belly Points = S$1.00 checkout credit</span>
@@ -147,20 +147,12 @@ function BellyTierShowcase({ currentTier }: { currentTier?: MemberAccount['tier'
 export function SummerClubView({
   member,
   authToken,
-  onAuthSuccess,
+  onOpenSignUp,
+  onOpenSignIn,
   onLogout,
   onTrackOrder,
   onReorder,
 }: SummerClubViewProps) {
-  const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
 
@@ -190,241 +182,48 @@ export function SummerClubView({
     };
   }, [member, authToken]);
 
-  const handleDemoLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ demo: true }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Login failed');
-      onAuthSuccess(data.member, data.token);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to sign in');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      const url = authTab === 'login' ? '/api/auth/login' : '/api/auth/register';
-      const body =
-        authTab === 'login'
-          ? { identifier, password }
-          : { name, email, phone, password };
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Authentication error');
-      onAuthSuccess(data.member, data.token);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to authenticate');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (!member) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Sign In & Registration Card */}
-          <div className="lg:col-span-5 bg-white rounded-2xl border border-[#1C1523]/10 p-6 sm:p-7 space-y-6">
-            <div>
-              <p className="text-xs font-semibold text-[#5B2378]">Belly Club Membership</p>
-              <h1 className="mt-1 font-display text-2xl font-bold text-[#1C1523]">
-                Earn Belly Points on every bowl
-              </h1>
-              <p className="mt-1.5 text-sm text-[#665E6E]">
-                Join free as a Belly Recruit with 150 bonus points, unlock Belly Warrior &amp; Belly Legend perks, and redeem points at checkout.
-              </p>
-            </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+        {/* Hero Invitation Banner with Sign-up Now CTA (no inline registration column) */}
+        <section className="bg-white rounded-2xl border border-[#1C1523]/10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <p className="text-xs font-semibold text-[#5B2378]">Belly Club Membership</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#1C1523] text-balance">
+              Earn Belly Points on every bowl
+            </h1>
+            <p className="text-sm text-[#665E6E] leading-relaxed">
+              Join free as a Belly Recruit with 150 bonus points, progress through Belly Warrior and Belly Legend perks, and redeem points directly at checkout.
+            </p>
+          </div>
 
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
               type="button"
-              disabled={loading}
-              onClick={handleDemoLogin}
-              className="w-full h-12 rounded-xl bg-[#5B2378]/10 hover:bg-[#5B2378]/15 border border-[#5B2378]/25 text-sm font-semibold text-[#5B2378] flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              onClick={onOpenSignUp}
+              className="min-h-[46px] px-6 py-2.5 rounded-xl bg-[#5B2378] hover:bg-[#491B61] text-white text-sm font-semibold transition-colors whitespace-nowrap cursor-pointer"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Demo Member (Tessa Tan · Belly Warrior)</span>
+              Sign-up Now
             </button>
-
-            <div className="relative flex items-center justify-center">
-              <span className="border-t border-[#1C1523]/10 w-full" />
-              <span className="bg-white px-3 text-xs text-[#665E6E] whitespace-nowrap">
-                or use your account
-              </span>
-              <span className="border-t border-[#1C1523]/10 w-full" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[#FAF9F7] border border-[#1C1523]/8">
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthTab('login');
-                  setError('');
-                }}
-                className={`h-10 rounded-lg text-xs font-semibold cursor-pointer ${
-                  authTab === 'login' ? 'bg-white text-[#1C1523] shadow-sm' : 'text-[#665E6E]'
-                }`}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthTab('register');
-                  setError('');
-                }}
-                className={`h-10 rounded-lg text-xs font-semibold cursor-pointer ${
-                  authTab === 'register' ? 'bg-white text-[#1C1523] shadow-sm' : 'text-[#665E6E]'
-                }`}
-              >
-                Create Account
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-              {authTab === 'register' && (
-                <>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Full Name"
-                    className="w-full h-11 px-3.5 rounded-xl border border-[#1C1523]/12 text-sm focus:outline-none focus:border-[#5B2378]"
-                  />
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Singapore Mobile (+65 9XXX XXXX)"
-                    className="w-full h-11 px-3.5 rounded-xl border border-[#1C1523]/12 text-sm focus:outline-none focus:border-[#5B2378]"
-                  />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email Address"
-                    className="w-full h-11 px-3.5 rounded-xl border border-[#1C1523]/12 text-sm focus:outline-none focus:border-[#5B2378]"
-                  />
-                </>
-              )}
-              {authTab === 'login' && (
-                <input
-                  type="text"
-                  required
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="Email or Mobile Number"
-                  className="w-full h-11 px-3.5 rounded-xl border border-[#1C1523]/12 text-sm focus:outline-none focus:border-[#5B2378]"
-                />
-              )}
-              <input
-                type="password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password (min 6 chars)"
-                className="w-full h-11 px-3.5 rounded-xl border border-[#1C1523]/12 text-sm focus:outline-none focus:border-[#5B2378]"
-              />
-
-              {error && <p className="text-xs font-medium text-rose-600">{error}</p>}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 rounded-xl bg-[#1C1523] hover:bg-[#5B2378] text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
-              >
-                {loading
-                  ? 'Authenticating...'
-                  : authTab === 'login'
-                  ? 'Sign In'
-                  : 'Join as Belly Recruit (+150 pts)'}
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={onOpenSignIn}
+              className="min-h-[46px] px-4 py-2.5 rounded-xl border border-[#1C1523]/12 hover:border-[#1C1523]/30 text-sm font-semibold text-[#1C1523] transition-colors whitespace-nowrap cursor-pointer"
+            >
+              Member Sign In
+            </button>
           </div>
+        </section>
 
-          {/* Tier Perks Programme Details */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="bg-white rounded-2xl border border-[#1C1523]/8 p-6 space-y-5">
-              <div>
-                <p className="text-xs font-semibold text-[#5B2378]">3-Tier Rewards Programme</p>
-                <h2 className="mt-1 font-display text-xl font-bold text-[#1C1523]">
-                  From Belly Recruit to Belly Legend
-                </h2>
-                <p className="mt-1 text-xs sm:text-sm text-[#665E6E]">
-                  Every order brings you closer to higher Belly Points multipliers, monthly bowl upgrades, and free island-wide delivery.
-                </p>
-              </div>
-
-              <div className="space-y-3.5">
-                {BELLY_TIERS.map((tier) => {
-                  const Icon = tier.icon;
-                  return (
-                    <div
-                      key={tier.name}
-                      className="rounded-xl bg-[#FAF9F7] border border-[#1C1523]/8 p-4 space-y-2.5"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-white border border-[#1C1523]/8 text-[#5B2378] flex items-center justify-center shrink-0">
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <h3 className="font-display text-sm font-bold text-[#1C1523]">
-                              {tier.name}
-                            </h3>
-                            <p className="text-[11px] text-[#665E6E]">{tier.summary}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-mono text-xs font-semibold text-[#1C1523] tabular-nums">
-                            {tier.pointsRange}
-                          </p>
-                          <p className="text-[11px] font-medium text-[#5B2378]">{tier.earnRate}</p>
-                        </div>
-                      </div>
-
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 pt-2 border-t border-[#1C1523]/8">
-                        {tier.perks.map((perk) => (
-                          <li
-                            key={perk}
-                            className="flex items-start gap-1.5 text-xs text-[#1C1523]"
-                          >
-                            <Check className="w-3.5 h-3.5 text-[#5B2378] mt-0.5 shrink-0" />
-                            <span>{perk}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Full-Width 3-Tier Rewards Programme */}
+        <BellyTierShowcase />
       </div>
     );
   }
 
   const nextTierTarget = member.points >= 1000 ? 1000 : member.points >= 400 ? 1000 : 400;
-  const nextTierName = member.points >= 1000 ? null : member.points >= 400 ? 'Belly Legend' : 'Belly Warrior';
+  const nextTierName =
+    member.points >= 1000 ? null : member.points >= 400 ? 'Belly Legend' : 'Belly Warrior';
   const progressPct = Math.min(100, Math.round((member.points / nextTierTarget) * 100));
 
   return (
@@ -469,7 +268,7 @@ export function SummerClubView({
               {member.points} <span className="text-sm font-normal text-white/75">pts</span>
             </p>
             <p className="text-[11px] text-white/70 tabular-nums">
-              Worth S${(Math.floor(member.points / 100)).toFixed(2)} at checkout
+              Worth S${Math.floor(member.points / 100).toFixed(2)} at checkout
             </p>
           </div>
 

@@ -1,15 +1,21 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Sparkles, X } from 'lucide-react';
 import type { MemberAccount } from '../types.ts';
 
 interface AuthModalProps {
   open: boolean;
+  initialTab?: 'login' | 'register';
   onClose: () => void;
   onAuthSuccess: (member: MemberAccount, token: string) => void;
 }
 
-export function AuthModal({ open, onClose, onAuthSuccess }: AuthModalProps) {
-  const [tab, setTab] = useState<'login' | 'register'>('login');
+export function AuthModal({
+  open,
+  initialTab = 'login',
+  onClose,
+  onAuthSuccess,
+}: AuthModalProps) {
+  const [tab, setTab] = useState<'login' | 'register'>(initialTab);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -17,6 +23,13 @@ export function AuthModal({ open, onClose, onAuthSuccess }: AuthModalProps) {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (open) {
+      setTab(initialTab);
+      setError('');
+    }
+  }, [open, initialTab]);
 
   if (!open) return null;
 
