@@ -7,7 +7,7 @@ import {
   Minus,
   Plus,
   QrCode,
-  ShoppingBag,
+  ShoppingCart,
   Smartphone,
   Tag,
   Trash2,
@@ -333,10 +333,13 @@ export function CartCheckoutPanel({
             </button>
           )}
           <div>
-            <h2 className="font-display text-base font-bold text-[#1C1523]">
-              {step === 'cart' && 'Your Cart'}
-              {step === 'identity' && 'Member or Guest'}
-              {step === 'payment' && 'Confirm & Pay'}
+            <h2 className="font-display text-base font-bold text-[#1C1523] flex items-center gap-1.5">
+              {step === 'cart' && <ShoppingCart className="w-4 h-4 text-[#5B2378] shrink-0" />}
+              <span>
+                {step === 'cart' && 'Your Cart'}
+                {step === 'identity' && 'Member or Guest'}
+                {step === 'payment' && 'Confirm & Pay'}
+              </span>
             </h2>
             <p className="text-xs text-[#665E6E] truncate">
               {fulfillmentMode === 'pickup' ? 'Self Pick-Up · #01-01' : 'Island Delivery · BellyBelly Good'}
@@ -365,7 +368,7 @@ export function CartCheckoutPanel({
       {items.length === 0 ? (
         <div className="p-8 text-center flex-1 flex flex-col items-center justify-center">
           <div className="w-12 h-12 rounded-2xl bg-[#F3EFEA] flex items-center justify-center text-[#5B2378] mb-3">
-            <ShoppingBag className="w-6 h-6" />
+            <ShoppingCart className="w-6 h-6" />
           </div>
           <p className="font-display text-base font-bold text-[#1C1523]">Your cart is empty</p>
           <p className="mt-1 text-xs text-[#665E6E] max-w-[230px]">

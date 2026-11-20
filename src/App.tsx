@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Clock, ShoppingBag, Tag, UtensilsCrossed, X } from 'lucide-react';
+import { Clock, ShoppingCart, Tag, UtensilsCrossed, X } from 'lucide-react';
 import type {
   CartItem,
   FulfillmentMode,
@@ -396,7 +396,7 @@ export default function App() {
               className="w-full h-11 rounded-xl bg-[#1C1523] hover:bg-[#5B2378] text-white px-4 flex items-center justify-between text-sm font-semibold shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
             >
               <span className="flex items-center gap-2">
-                <ShoppingBag className="w-4 h-4" />
+                <ShoppingCart className="w-4 h-4" />
                 <span>View Cart ({cartCount})</span>
               </span>
               <span className="font-mono tabular-nums">S${cartSubtotal.toFixed(2)}</span>
@@ -438,17 +438,17 @@ export default function App() {
         )}
       </div>
 
-      {/* Mobile Full-Height Cart & Checkout Sheet */}
+      {/* Responsive Cart & Checkout Drawer (Bottom Sheet on Mobile, Right Slide-Over on Tablet/Desktop) */}
       {mobileCartOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-stretch md:justify-end"
           role="dialog"
           aria-modal="true"
           aria-label="Cart and checkout"
           onClick={() => setMobileCartOpen(false)}
         >
           <div
-            className="w-full h-[92vh] bg-white rounded-t-3xl overflow-hidden flex flex-col"
+            className="w-full h-[92vh] md:h-full md:max-w-md bg-white rounded-t-3xl md:rounded-none md:rounded-l-2xl overflow-hidden flex flex-col shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <CartCheckoutPanel

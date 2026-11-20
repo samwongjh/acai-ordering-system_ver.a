@@ -1,4 +1,4 @@
-import { ShoppingBag, User } from 'lucide-react';
+import { ShoppingCart, User } from 'lucide-react';
 import type { MemberAccount } from '../types.ts';
 
 export type AppView = 'menu' | 'promotions' | 'track' | 'club';
@@ -24,7 +24,7 @@ export function TopHeader({
 }: TopHeaderProps) {
   return (
     <header className="h-[48px] md:h-16 bg-white/95 backdrop-blur-md border-b border-[#1C1523]/8">
-      <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-8">
+      <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
         {/* Zone 1: Single text element wordmark */}
         <button
           type="button"
@@ -74,8 +74,22 @@ export function TopHeader({
           </button>
         </nav>
 
-        {/* Zone 3: Single Primary Contextual Action */}
+        {/* Zone 3: Cart & Member Actions */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Desktop & Tablet Cart button */}
+          <button
+            type="button"
+            onClick={onOpenMobileCart}
+            aria-label={`Open Cart${cartCount > 0 ? ` (${cartCount} items)` : ''}`}
+            className="hidden md:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#1C1523]/12 hover:border-[#5B2378]/40 bg-white hover:bg-[#FAF9F7] text-xs font-semibold text-[#1C1523] transition-colors whitespace-nowrap shrink-0 cursor-pointer min-h-[40px]"
+          >
+            <ShoppingCart className="w-4 h-4 text-[#5B2378]" />
+            <span>Cart</span>
+            {cartCount > 0 && (
+              <span className="font-mono tabular-nums text-[#5B2378]">({cartCount})</span>
+            )}
+          </button>
+
           {member ? (
             <button
               type="button"
@@ -114,7 +128,7 @@ export function TopHeader({
               aria-label="Open Cart"
               className="relative min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl text-[#1C1523] hover:bg-[#F3EFEA] transition-colors cursor-pointer"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#5B2378] text-white text-[10px] font-bold flex items-center justify-center tabular-nums">
                   {cartCount}
