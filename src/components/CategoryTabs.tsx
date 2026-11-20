@@ -17,7 +17,7 @@ export function CategoryTabs({
   onChangeSearch,
 }: CategoryTabsProps) {
   return (
-    <div className="sticky top-[52px] md:top-16 z-20 bg-[#FAF9F7]/95 backdrop-blur-md border-b border-[#1C1523]/8">
+    <div className="sticky top-[84px] md:top-[108px] z-20 bg-[#FAF9F7]/95 backdrop-blur-md border-b border-[#1C1523]/8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div
           className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5"

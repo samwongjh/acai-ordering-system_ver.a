@@ -93,9 +93,9 @@ export function AuthModal({
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold text-[#5B2378]">Belly Club</p>
+            <p className="text-xs font-semibold text-[#5B2378]">Belly Tribe</p>
             <h2 className="font-display text-xl font-bold text-[#1C1523]">
-              {tab === 'login' ? 'Member Sign In' : 'Join Belly Club'}
+              {tab === 'login' ? 'Member Sign In' : 'Join Belly Tribe'}
             </h2>
           </div>
           <button

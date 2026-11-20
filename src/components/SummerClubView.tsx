@@ -36,7 +36,7 @@ const BELLY_TIERS: BellyTierDefinition[] = [
     name: 'Belly Recruit',
     pointsRange: '0 – 399 pts',
     earnRate: '10 pts per S$1',
-    summary: 'Your entry pass into Belly Club rewards from day one.',
+    summary: 'Your entry pass into Belly Tribe rewards from day one.',
     icon: Shield,
     perks: [
       '150 welcome Belly Points upon registration',
@@ -188,7 +188,7 @@ export function SummerClubView({
         {/* Hero Invitation Banner with Sign-up Now CTA (no inline registration column) */}
         <section className="bg-white rounded-2xl border border-[#1C1523]/10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <p className="text-xs font-semibold text-[#5B2378]">Belly Club Membership</p>
+            <p className="text-xs font-semibold text-[#5B2378]">Belly Tribe Membership</p>
             <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#1C1523] text-balance">
               Earn Belly Points on every bowl
             </h1>

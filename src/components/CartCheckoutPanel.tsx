@@ -547,7 +547,7 @@ export function CartCheckoutPanel({
                         : 'text-[#665E6E]'
                     }`}
                   >
-                    Belly Club Member
+                    Belly Tribe Member
                   </button>
                   <button
                     type="button"
@@ -670,7 +670,7 @@ export function CartCheckoutPanel({
                         {authLoading
                           ? 'Please wait...'
                           : authTab === 'login'
-                          ? 'Sign In to Belly Club'
+                          ? 'Sign In to Belly Tribe'
                           : 'Create Account & Earn 150 pts'}
                       </button>
                     </form>

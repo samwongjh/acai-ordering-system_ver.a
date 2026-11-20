@@ -23,7 +23,7 @@ export function TopHeader({
   hasActiveOrder,
 }: TopHeaderProps) {
   return (
-    <header className="sticky top-0 z-30 h-[52px] md:h-16 bg-white/95 backdrop-blur-md border-b border-[#1C1523]/8">
+    <header className="h-[48px] md:h-16 bg-white/95 backdrop-blur-md border-b border-[#1C1523]/8">
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-8">
         {/* Zone 1: Single text element wordmark */}
         <button
@@ -103,7 +103,7 @@ export function TopHeader({
             <button
               type="button"
               onClick={member ? () => onChangeView('club') : onOpenAuthModal}
-              aria-label={member ? 'Belly Club Account' : 'Sign in'}
+              aria-label={member ? 'Belly Tribe Account' : 'Sign in'}
               className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl text-[#1C1523] hover:bg-[#F3EFEA] transition-colors cursor-pointer"
             >
               <User className="w-5 h-5" />

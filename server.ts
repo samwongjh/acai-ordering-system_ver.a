@@ -186,7 +186,7 @@ function createSeedData(): StoreData {
       memberId: demoMemberId,
       name: 'Tessa Tan',
       phone: '+65 9123 4567',
-      email: 'tessa.tan@bellyclub.sg',
+      email: 'tessa.tan@bellytribe.sg',
       pickupWindow: 'ASAP',
     },
     paymentMethod: 'paynow',
@@ -217,7 +217,7 @@ function createSeedData(): StoreData {
       {
         id: demoMemberId,
         name: 'Tessa Tan',
-        email: 'tessa.tan@bellyclub.sg',
+        email: 'tessa.tan@bellytribe.sg',
         phone: '+65 9123 4567',
         passwordHash: hashPassword('belly123'),
         points: 420,
@@ -507,7 +507,7 @@ async function startServer() {
       });
 
       if (!member || member.passwordHash !== hashPassword(password)) {
-        res.status(401).json({ error: 'Invalid Belly Club credentials. Try Demo Member or check password.' });
+        res.status(401).json({ error: 'Invalid Belly Tribe credentials. Try Demo Member or check password.' });
         return;
       }
     }

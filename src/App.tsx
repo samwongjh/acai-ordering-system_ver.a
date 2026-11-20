@@ -259,22 +259,23 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F7] text-[#1C1523]">
-      <TopHeader
-        activeView={activeView}
-        onChangeView={setActiveView}
-        onOpenAuthModal={() => openAuthModal('login')}
-        onOpenMobileCart={() => setMobileCartOpen(true)}
-        member={member}
-        cartCount={cartCount}
-        hasActiveOrder={Boolean(activeOrder && activeOrder.status !== 'completed')}
-      />
+      <div className="sticky top-0 z-30">
+        <TopHeader
+          activeView={activeView}
+          onChangeView={setActiveView}
+          onOpenAuthModal={() => openAuthModal('login')}
+          onOpenMobileCart={() => setMobileCartOpen(true)}
+          member={member}
+          cartCount={cartCount}
+          hasActiveOrder={Boolean(activeOrder && activeOrder.status !== 'completed')}
+        />
 
-      <BellyClubSubHeader
-        member={member}
-        isClubActive={activeView === 'club'}
-        onOpenBellyClub={() => setActiveView('club')}
-        onOpenSignUp={() => openAuthModal('register')}
-      />
+        <BellyClubSubHeader
+          member={member}
+          isClubActive={activeView === 'club'}
+          onOpenBellyClub={() => setActiveView('club')}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 pb-20 md:pb-12">
@@ -309,7 +310,7 @@ export default function App() {
                 </div>
 
                 {/* Desktop Sticky Qlub Basket & Checkout Sidebar */}
-                <aside className="hidden lg:block lg:col-span-4 sticky top-[134px] h-[calc(100vh-154px)]">
+                <aside className="hidden lg:block lg:col-span-4 sticky top-[178px] h-[calc(100vh-198px)]">
                   <CartCheckoutPanel
                     items={cart}
                     fulfillmentMode={fulfillmentMode}
