@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Award, Clock, ShoppingBag, UtensilsCrossed, X } from 'lucide-react';
+import { Award, Clock, ShoppingBag, Tag, UtensilsCrossed, X } from 'lucide-react';
 import type {
   CartItem,
   FulfillmentMode,
@@ -17,8 +17,8 @@ import { ItemCustomizationSheet } from './components/ItemCustomizationSheet.tsx'
 import { CartCheckoutPanel } from './components/CartCheckoutPanel.tsx';
 import { OrderTrackerView } from './components/OrderTrackerView.tsx';
 import { SummerClubView } from './components/SummerClubView.tsx';
+import { PromotionsView } from './components/PromotionsView.tsx';
 import { AuthModal } from './components/AuthModal.tsx';
-import { OutletInfoModal } from './components/OutletInfoModal.tsx';
 
 const STORAGE_CART_KEY = 'bellybelly_cart_v1';
 const STORAGE_TOKEN_KEY = 'bellybelly_token_v1';
@@ -52,7 +52,6 @@ export default function App() {
   const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
   const [mobileCartOpen, setMobileCartOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [outletInfoOpen, setOutletInfoOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string) => {
@@ -256,7 +255,6 @@ export default function App() {
       <TopHeader
         activeView={activeView}
         onChangeView={setActiveView}
-        onOpenOutletInfo={() => setOutletInfoOpen(true)}
         onOpenAuthModal={() => setAuthModalOpen(true)}
         onOpenMobileCart={() => setMobileCartOpen(true)}
         member={member}
@@ -272,7 +270,6 @@ export default function App() {
               outlet={OUTLET_INFO}
               fulfillmentMode={fulfillmentMode}
               onChangeFulfillment={setFulfillmentMode}
-              onOpenOutletInfo={() => setOutletInfoOpen(true)}
             />
 
             <CategoryTabs
@@ -340,6 +337,12 @@ export default function App() {
             onReorder={handleReorder}
           />
         )}
+        {activeView === 'promotions' && (
+          <PromotionsView
+            outlet={OUTLET_INFO}
+            onBrowseMenu={() => setActiveView('menu')}
+          />
+        )}
       </main>
 
       {/* Quiet Desktop Footer */}
@@ -349,10 +352,10 @@ export default function App() {
           <div className="flex items-center gap-5">
             <button
               type="button"
-              onClick={() => setOutletInfoOpen(true)}
+              onClick={() => setActiveView('promotions')}
               className="hover:text-[#1C1523] cursor-pointer"
             >
-              Store Info & Promos
+              Promotions
             </button>
             <button
               type="button"
@@ -383,7 +386,7 @@ export default function App() {
             </button>
           </div>
         ) : (
-          <nav className="grid grid-cols-3 h-[56px]" aria-label="Mobile navigation">
+          <nav className="grid grid-cols-4 h-[56px]" aria-label="Mobile navigation">
             <button
               type="button"
               onClick={() => setActiveView('menu')}
@@ -393,6 +396,16 @@ export default function App() {
             >
               <UtensilsCrossed className="w-5 h-5" />
               <span>Menu</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveView('promotions')}
+              className={`flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium cursor-pointer ${
+                activeView === 'promotions' ? 'text-[#5B2378] font-semibold' : 'text-[#665E6E]'
+              }`}
+            >
+              <Tag className="w-5 h-5" />
+              <span>Promotions</span>
             </button>
             <button
               type="button"
@@ -462,13 +475,6 @@ export default function App() {
         open={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
-      />
-
-      {/* Outlet Info Modal */}
-      <OutletInfoModal
-        open={outletInfoOpen}
-        outlet={OUTLET_INFO}
-        onClose={() => setOutletInfoOpen(false)}
       />
 
       {/* Subtle Action Toast */}

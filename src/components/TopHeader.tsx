@@ -1,12 +1,11 @@
 import { ShoppingBag, User } from 'lucide-react';
 import type { MemberAccount } from '../types.ts';
 
-export type AppView = 'menu' | 'track' | 'club';
+export type AppView = 'menu' | 'promotions' | 'track' | 'club';
 
 interface TopHeaderProps {
   activeView: AppView;
   onChangeView: (view: AppView) => void;
-  onOpenOutletInfo: () => void;
   onOpenAuthModal: () => void;
   onOpenMobileCart: () => void;
   member: MemberAccount | null;
@@ -17,7 +16,6 @@ interface TopHeaderProps {
 export function TopHeader({
   activeView,
   onChangeView,
-  onOpenOutletInfo,
   onOpenAuthModal,
   onOpenMobileCart,
   member,
@@ -76,10 +74,14 @@ export function TopHeader({
           </button>
           <button
             type="button"
-            onClick={onOpenOutletInfo}
-            className="py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 border-transparent hover:text-[#1C1523]"
+            onClick={() => onChangeView('promotions')}
+            className={`py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeView === 'promotions'
+                ? 'text-[#1C1523] border-[#5B2378] font-semibold'
+                : 'border-transparent hover:text-[#1C1523]'
+            }`}
           >
-            Outlet Info
+            Promotions
           </button>
         </nav>
 

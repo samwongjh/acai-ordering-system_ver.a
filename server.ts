@@ -221,7 +221,7 @@ function createSeedData(): StoreData {
         phone: '+65 9123 4567',
         passwordHash: hashPassword('belly123'),
         points: 420,
-        tier: 'Berry Insider',
+        tier: 'Belly Warrior',
         savedAddresses: [
           {
             id: 'addr_1',
@@ -280,9 +280,18 @@ function saveStore(data: StoreData): void {
   }
 }
 
+function computeBellyTier(points: number): MemberAccount['tier'] {
+  if (points >= 1000) return 'Belly Legend';
+  if (points >= 400) return 'Belly Warrior';
+  return 'Belly Recruit';
+}
+
 function sanitizeMember(member: StoredMember): MemberAccount {
   const { passwordHash: _ignored, ...safe } = member;
-  return safe;
+  return {
+    ...safe,
+    tier: computeBellyTier(safe.points),
+  };
 }
 
 const STAGE_ORDER: OrderStatusStage[] = [
@@ -543,7 +552,7 @@ async function startServer() {
       phone: cleanPhone.startsWith('+') ? cleanPhone : `+65 ${cleanPhone}`,
       passwordHash: hashPassword(password),
       points: 150, // Welcome bonus
-      tier: 'Belly Friend',
+      tier: 'Belly Recruit',
       savedAddresses: [],
       joinedAt: new Date().toISOString(),
     };
@@ -629,9 +638,10 @@ async function startServer() {
       pointsDiscount = Number((pointsRedeemed / 100).toFixed(2));
     }
 
+    const activeTier = sessionMember ? computeBellyTier(sessionMember.points) : null;
     const deliveryFee =
       body.fulfillmentMode === 'delivery'
-        ? subtotal >= 35
+        ? activeTier === 'Belly Legend' || subtotal >= 35
           ? 0
           : 3.5
         : 0;
@@ -639,12 +649,13 @@ async function startServer() {
     const total = Number(
       Math.max(0, subtotal - promoDiscount - pointsDiscount + deliveryFee).toFixed(2)
     );
-    const pointsEarned = sessionMember ? Math.round(total * 10) : 0;
+    const pointsMultiplier =
+      activeTier === 'Belly Legend' ? 15 : activeTier === 'Belly Warrior' ? 12.5 : 10;
+    const pointsEarned = sessionMember ? Math.round(total * pointsMultiplier) : 0;
 
     if (sessionMember) {
       sessionMember.points = Math.max(0, sessionMember.points - pointsRedeemed + pointsEarned);
-      if (sessionMember.points >= 1000) sessionMember.tier = 'Açaí VIP';
-      else if (sessionMember.points >= 400) sessionMember.tier = 'Berry Insider';
+      sessionMember.tier = computeBellyTier(sessionMember.points);
 
       if (
         body.fulfillmentMode === 'delivery' &&

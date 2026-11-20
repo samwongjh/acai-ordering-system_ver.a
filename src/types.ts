@@ -77,7 +77,7 @@ export interface MemberAccount {
   email: string;
   phone: string;
   points: number;
-  tier: 'Belly Friend' | 'Berry Insider' | 'Açaí VIP';
+  tier: 'Belly Recruit' | 'Belly Warrior' | 'Belly Legend';
   savedAddresses: SavedAddress[];
   joinedAt: string;
 }

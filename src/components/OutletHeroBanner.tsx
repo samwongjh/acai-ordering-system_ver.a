@@ -1,4 +1,4 @@
-import { Clock, Info, MapPin, Star, Truck, Store } from 'lucide-react';
+import { Clock, MapPin, Star, Truck, Store } from 'lucide-react';
 import type { FulfillmentMode, OutletInfo } from '../types.ts';
 import { FoodImage } from './FoodImage.tsx';
 
@@ -6,14 +6,12 @@ interface OutletHeroBannerProps {
   outlet: OutletInfo;
   fulfillmentMode: FulfillmentMode;
   onChangeFulfillment: (mode: FulfillmentMode) => void;
-  onOpenOutletInfo: () => void;
 }
 
 export function OutletHeroBanner({
   outlet,
   fulfillmentMode,
   onChangeFulfillment,
-  onOpenOutletInfo,
 }: OutletHeroBannerProps) {
   return (
     <section className="bg-white border-b border-[#1C1523]/8">
@@ -36,14 +34,6 @@ export function OutletHeroBanner({
                   100% Pure Brazilian Açaí
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={onOpenOutletInfo}
-                className="min-h-[40px] px-3 py-1.5 rounded-xl bg-white/90 text-[#1C1523] text-xs font-semibold flex items-center gap-1.5 hover:bg-white transition-colors cursor-pointer whitespace-nowrap shrink-0"
-              >
-                <Info className="w-3.5 h-3.5 text-[#5B2378]" />
-                <span>Store Info</span>
-              </button>
             </div>
           </div>
 

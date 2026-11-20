@@ -99,9 +99,12 @@ export function CartCheckoutPanel({
   const [submitError, setSubmitError] = useState('');
 
   const subtotal = Number(items.reduce((sum, i) => sum + i.lineTotal, 0).toFixed(2));
+  const isBellyLegend = Boolean(
+    member && checkoutIdentityMode === 'member' && member.tier === 'Belly Legend'
+  );
   const deliveryFee =
     fulfillmentMode === 'delivery' && items.length > 0
-      ? subtotal >= OUTLET_INFO.freeDeliveryThreshold
+      ? isBellyLegend || subtotal >= OUTLET_INFO.freeDeliveryThreshold
         ? 0
         : OUTLET_INFO.deliveryFee
       : 0;
@@ -915,9 +918,18 @@ export function CartCheckoutPanel({
                   </div>
                   {member && checkoutIdentityMode === 'member' && (
                     <div className="flex justify-between text-[#5B2378]">
-                      <span>Belly Points to earn</span>
+                      <span>Belly Points to earn ({member.tier})</span>
                       <span className="font-mono font-semibold tabular-nums">
-                        +{Math.round(grandTotal * 10)} pts
+                        +
+                        {Math.round(
+                          grandTotal *
+                            (member.tier === 'Belly Legend'
+                              ? 15
+                              : member.tier === 'Belly Warrior'
+                              ? 12.5
+                              : 10)
+                        )}{' '}
+                        pts
                       </span>
                     </div>
                   )}
