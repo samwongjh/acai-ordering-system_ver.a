@@ -21,3 +21,16 @@ A chronological record of the prompts used to build and iterate on the **BellyBe
 10. Change these icons to cute mascots instead of a shield, badge and crown. *(with screenshot attachment)*
 11. Update the Basket to Cart and include a Sign-Up button above "Proceed to Pay" to state that the % savings if they sign up. *(with screenshot attachment)*
 12. Commit all changes to GitHub and collate all prompts above under `prompts.md` filename.
+13. include the cart icon as users cannot locate the cart option to identify the list of items
+14. commit all changes to github
+15. embed the following code in the website, collate all prompts under `prompts.md` filename and commit all changes to github:
+
+```html
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zgi74gt88t");
+</script>
+```
