@@ -80,9 +80,9 @@ export function AuthModal({ open, onClose, onAuthSuccess }: AuthModalProps) {
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold text-[#5B2378]">The Summer Club</p>
+            <p className="text-xs font-semibold text-[#5B2378]">Belly Club</p>
             <h2 className="font-display text-xl font-bold text-[#1C1523]">
-              {tab === 'login' ? 'Member Sign In' : 'Join Summer Club'}
+              {tab === 'login' ? 'Member Sign In' : 'Join Belly Club'}
             </h2>
           </div>
           <button

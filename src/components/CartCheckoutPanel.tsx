@@ -107,9 +107,9 @@ export function CartCheckoutPanel({
       : 0;
 
   let promoDiscount = 0;
-  if (appliedPromo === 'PUNGGOL10') {
+  if (appliedPromo === 'BELLY10') {
     promoDiscount = Number((subtotal * 0.1).toFixed(2));
-  } else if (appliedPromo === 'SUMMER5' && subtotal >= 25) {
+  } else if (appliedPromo === 'BELLY5' && subtotal >= 25) {
     promoDiscount = 5.0;
   }
 
@@ -132,18 +132,18 @@ export function CartCheckoutPanel({
     const code = promoInput.trim().toUpperCase();
     setPromoError('');
     if (!code) return;
-    if (code === 'PUNGGOL10') {
-      setAppliedPromo('PUNGGOL10');
+    if (code === 'BELLY10') {
+      setAppliedPromo('BELLY10');
       setPromoInput('');
-    } else if (code === 'SUMMER5') {
+    } else if (code === 'BELLY5') {
       if (subtotal < 25) {
-        setPromoError('SUMMER5 requires a minimum subtotal of S$25.00.');
+        setPromoError('BELLY5 requires a minimum subtotal of S$25.00.');
         return;
       }
-      setAppliedPromo('SUMMER5');
+      setAppliedPromo('BELLY5');
       setPromoInput('');
     } else {
-      setPromoError('Invalid code. Try PUNGGOL10 or SUMMER5.');
+      setPromoError('Invalid code. Try BELLY10 or BELLY5.');
     }
   };
 
@@ -238,7 +238,7 @@ export function CartCheckoutPanel({
       memberId: useMember ? member?.id : undefined,
       name: (useMember ? member!.name : contactName).trim(),
       phone: (useMember ? member!.phone : contactPhone).trim(),
-      email: (useMember ? member!.email : contactEmail).trim() || 'guest@summeracai.sg',
+      email: (useMember ? member!.email : contactEmail).trim() || 'guest@bellybellygood.sg',
       pickupWindow: fulfillmentMode === 'pickup' ? pickupWindow : undefined,
       deliveryAddress:
         fulfillmentMode === 'delivery'
@@ -308,7 +308,7 @@ export function CartCheckoutPanel({
               {step === 'payment' && 'Confirm & Pay'}
             </h2>
             <p className="text-xs text-[#665E6E] truncate">
-              {fulfillmentMode === 'pickup' ? 'Self Pick-Up · #01-12' : 'Island Delivery · Punggol Coast'}
+              {fulfillmentMode === 'pickup' ? 'Self Pick-Up · #01-01' : 'Island Delivery · BellyBelly Good'}
             </p>
           </div>
         </div>
@@ -492,7 +492,7 @@ export function CartCheckoutPanel({
                         type="text"
                         value={promoInput}
                         onChange={(e) => setPromoInput(e.target.value)}
-                        placeholder="Promo code (e.g. PUNGGOL10)"
+                        placeholder="Promo code (e.g. BELLY10)"
                         className="w-full h-10 pl-8 pr-3 rounded-xl border border-[#1C1523]/12 text-xs text-[#1C1523] placeholder:text-[#665E6E]/70 focus:outline-none focus:border-[#5B2378]"
                       />
                     </div>
@@ -544,7 +544,7 @@ export function CartCheckoutPanel({
                         : 'text-[#665E6E]'
                     }`}
                   >
-                    Summer Club Member
+                    Belly Club Member
                   </button>
                   <button
                     type="button"
@@ -667,7 +667,7 @@ export function CartCheckoutPanel({
                         {authLoading
                           ? 'Please wait...'
                           : authTab === 'login'
-                          ? 'Sign In to Summer Club'
+                          ? 'Sign In to Belly Club'
                           : 'Create Account & Earn 150 pts'}
                       </button>
                     </form>
@@ -745,7 +745,7 @@ export function CartCheckoutPanel({
                     {fulfillmentMode === 'pickup' ? (
                       <div className="pt-1">
                         <label className="block text-xs font-semibold text-[#1C1523] mb-1.5">
-                          Pick-Up Window · Punggol Coast #01-12
+                          Pick-Up Window · Flagship Counter #01-01
                         </label>
                         <div className="grid grid-cols-2 gap-2">
                           {['ASAP (~10 mins)', 'In 20 mins', 'In 30 mins', 'In 45 mins'].map((slot) => (
@@ -915,7 +915,7 @@ export function CartCheckoutPanel({
                   </div>
                   {member && checkoutIdentityMode === 'member' && (
                     <div className="flex justify-between text-[#5B2378]">
-                      <span>Summer Points to earn</span>
+                      <span>Belly Points to earn</span>
                       <span className="font-mono font-semibold tabular-nums">
                         +{Math.round(grandTotal * 10)} pts
                       </span>

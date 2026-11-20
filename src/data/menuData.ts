@@ -8,10 +8,10 @@ export const DRINK_MATCHA_IMAGE = '/src/assets/images/drink_strawberry_matcha_17
 export const DRINK_COFFEE_IMAGE = '/src/assets/images/drink_iced_coconut_coffee_1795157411974.jpg';
 
 export const OUTLET_INFO: OutletInfo = {
-  brand: 'The Summer Açaí',
-  branch: 'Punggol Coast',
-  address: '88 Punggol Way, #01-12 Punggol Coast Mall',
-  postalCode: 'Singapore 829913',
+  brand: 'BellyBelly Good',
+  branch: 'Exclusive Flagship',
+  address: '28 Keong Saik Road, #01-01',
+  postalCode: 'Singapore 089135',
   hours: 'Daily 11:00 AM – 10:00 PM',
   rating: 4.9,
   reviewCount: '1.4k',
@@ -22,12 +22,12 @@ export const OUTLET_INFO: OutletInfo = {
   heroImage: HERO_BANNER_IMAGE,
   activePromos: [
     {
-      code: 'PUNGGOL10',
+      code: 'BELLY10',
       label: '10% Off Storewide',
-      detail: 'Valid on all signature bowls and Thirst Trap drinks at Punggol Coast.',
+      detail: 'Valid on all signature bowls and Thirst Trap drinks at BellyBelly Good.',
     },
     {
-      code: 'SUMMER5',
+      code: 'BELLY5',
       label: 'S$5.00 Off Orders S$25+',
       detail: 'Enjoy S$5 off when your basket subtotal reaches S$25.00.',
     },
@@ -157,7 +157,7 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "Oo She's Peachy",
     category: 'signature-bowls',
     description:
-      'Swirled Summer Açaí and fragrant Peach Oolong sorbet paired with chilled yellow peaches, pitaya cubes, strawberries, and crispy Lotus Biscoff crumbs.',
+      'Swirled organic açaí and fragrant Peach Oolong sorbet paired with chilled yellow peaches, pitaya cubes, strawberries, and crispy Lotus Biscoff crumbs.',
     basePrice: 12.5,
     image: BOWL_PEACH_IMAGE,
     dietaryLine: 'Seasonal Swirl · Refreshing',
@@ -196,11 +196,11 @@ export const MENU_ITEMS: MenuItem[] = [
     modifierGroups: [BOWL_SIZE_GROUP, BOWL_SAUCE_GROUP, BOWL_ADDONS_GROUP],
   },
   {
-    id: 'diy-summer-bowl',
-    name: 'DIY Summer Bowl',
+    id: 'diy-belly-bowl',
+    name: 'DIY Belly Bowl',
     category: 'diy-bowl',
     description:
-      'Craft your own Punggol Coast bowl from scratch. Pick your sorbet base, signature drizzle, and load up with fresh fruits, nut crunches, or chia pudding.',
+      'Craft your own BellyBelly Good bowl from scratch. Pick your sorbet base, signature drizzle, and load up with fresh fruits, nut crunches, or chia pudding.',
     basePrice: 9.5,
     image: BOWL_CLASSIC_IMAGE,
     dietaryLine: 'Customizable · Vegan Base',
@@ -321,7 +321,7 @@ export const MENU_ITEMS: MenuItem[] = [
     name: 'Signature Bowl + Matcha Set',
     category: 'bundles',
     description:
-      'One Regular Basic Bitch (Classic) Açaí Bowl paired with one 16oz Ice Strawberry Matcha. Curated Punggol Coast combo savings.',
+      'One Regular Basic Bitch (Classic) Açaí Bowl paired with one 16oz Ice Strawberry Matcha. Curated BellyBelly Good combo savings.',
     basePrice: 17.8,
     image: HERO_BANNER_IMAGE,
     dietaryLine: 'Combo · Save S$1.20',

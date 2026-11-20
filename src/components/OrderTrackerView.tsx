@@ -142,7 +142,7 @@ export function OrderTrackerView({
             onClick={onBackToMenu}
             className="h-11 px-5 rounded-xl bg-[#1C1523] text-white text-sm font-semibold hover:bg-[#5B2378] transition-colors cursor-pointer"
           >
-            Browse Punggol Coast Menu
+            Browse BellyBelly Good Menu
           </button>
         </div>
       ) : (
@@ -191,7 +191,7 @@ export function OrderTrackerView({
                       <Bike className="w-4 h-4 text-[#5B2378]" />
                       {activeOrder.riderName
                         ? `${activeOrder.riderName} (${activeOrder.riderPlate})`
-                        : 'Assigning Punggol Coast Courier'}
+                        : 'Assigning Express Courier'}
                     </span>
                     <span className="font-mono font-semibold text-[#5B2378] tabular-nums">
                       {activeOrder.etaMinutes > 0 ? `${activeOrder.etaMinutes} min ETA` : 'Arrived'}
@@ -207,7 +207,7 @@ export function OrderTrackerView({
                       />
                     </div>
                     <div className="mt-2 flex items-center justify-between text-[11px] text-[#665E6E]">
-                      <span>88 Punggol Way</span>
+                      <span>28 Keong Saik Rd</span>
                       <span>
                         {activeOrder.customer.deliveryAddress?.street}{' '}
                         {activeOrder.customer.deliveryAddress?.postalCode}
@@ -220,7 +220,7 @@ export function OrderTrackerView({
                   <div className="space-y-1">
                     <p className="text-xs font-semibold text-[#1C1523] flex items-center gap-1.5">
                       <Store className="w-4 h-4 text-[#5B2378]" />
-                      Punggol Coast Express Counter (#01-12)
+                      BellyBelly Good Express Counter (#01-01)
                     </p>
                     <p className="text-xs text-[#665E6E]">
                       Present queue code <span className="font-mono font-semibold text-[#1C1523]">#{activeOrder.queueNumber}</span> when your status switches to Ready.
@@ -365,7 +365,7 @@ export function OrderTrackerView({
               )}
               {activeOrder.pointsDiscount > 0 && (
                 <div className="flex justify-between text-[#5B2378]">
-                  <span>Summer Points ({activeOrder.pointsRedeemed} pts)</span>
+                  <span>Belly Points ({activeOrder.pointsRedeemed} pts)</span>
                   <span className="font-mono tabular-nums">
                     -S${activeOrder.pointsDiscount.toFixed(2)}
                   </span>
@@ -385,7 +385,7 @@ export function OrderTrackerView({
               </div>
               {activeOrder.pointsEarned > 0 && (
                 <p className="text-xs font-medium text-[#5B2378] pt-1">
-                  +{activeOrder.pointsEarned} Summer Points credited to your account
+                  +{activeOrder.pointsEarned} Belly Points credited to your account
                 </p>
               )}
             </div>

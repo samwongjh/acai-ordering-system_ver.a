@@ -33,7 +33,7 @@ interface StoreData {
 }
 
 function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(`summer_acai_salt_${password}`).digest('hex');
+  return crypto.createHash('sha256').update(`bellybelly_salt_${password}`).digest('hex');
 }
 
 function formatSgTime(date: Date): string {
@@ -56,7 +56,7 @@ function createInitialTimeline(mode: FulfillmentMode, nowStr: string): OrderTime
       {
         stage: 'confirmed',
         title: 'Order Confirmed',
-        subtitle: 'Sent to Punggol Coast kitchen',
+        subtitle: 'Sent to BellyBelly Good kitchen',
         timestamp: nowStr,
         completed: true,
         active: false,
@@ -80,7 +80,7 @@ function createInitialTimeline(mode: FulfillmentMode, nowStr: string): OrderTime
       {
         stage: 'ready_or_enroute',
         title: 'Ready at Pick-Up Counter',
-        subtitle: 'Show your queue code at #01-12 express counter',
+        subtitle: 'Show your queue code at #01-01 express counter',
         timestamp: null,
         completed: false,
         active: false,
@@ -88,7 +88,7 @@ function createInitialTimeline(mode: FulfillmentMode, nowStr: string): OrderTime
       {
         stage: 'completed',
         title: 'Order Collected',
-        subtitle: 'Enjoy your Summer Açaí',
+        subtitle: 'Enjoy your BellyBelly Good bowl',
         timestamp: null,
         completed: false,
         active: false,
@@ -100,7 +100,7 @@ function createInitialTimeline(mode: FulfillmentMode, nowStr: string): OrderTime
     {
       stage: 'confirmed',
       title: 'Order Confirmed',
-      subtitle: 'Accepted by The Summer Açaí · Punggol Coast',
+      subtitle: 'Accepted by BellyBelly Good Kitchen',
       timestamp: nowStr,
       completed: true,
       active: false,
@@ -124,7 +124,7 @@ function createInitialTimeline(mode: FulfillmentMode, nowStr: string): OrderTime
     {
       stage: 'ready_or_enroute',
       title: 'Rider En Route',
-      subtitle: 'Courier heading from Punggol Way toward your block',
+      subtitle: 'Courier heading from 28 Keong Saik Rd toward your block',
       timestamp: null,
       completed: false,
       active: false,
@@ -149,8 +149,8 @@ function createSeedData(): StoreData {
     id: 'ORD-8421',
     queueNumber: 'A-391',
     fulfillmentMode: 'pickup',
-    outletName: 'The Summer Açaí · Punggol Coast',
-    outletAddress: '88 Punggol Way, #01-12 Punggol Coast Mall, Singapore 829913',
+    outletName: 'BellyBelly Good',
+    outletAddress: '28 Keong Saik Road, #01-01, Singapore 089135',
     items: [
       {
         cartItemId: 'seed_item_1',
@@ -186,7 +186,7 @@ function createSeedData(): StoreData {
       memberId: demoMemberId,
       name: 'Tessa Tan',
       phone: '+65 9123 4567',
-      email: 'tessa.tan@summerclub.sg',
+      email: 'tessa.tan@bellyclub.sg',
       pickupWindow: 'ASAP',
     },
     paymentMethod: 'paynow',
@@ -217,26 +217,26 @@ function createSeedData(): StoreData {
       {
         id: demoMemberId,
         name: 'Tessa Tan',
-        email: 'tessa.tan@summerclub.sg',
+        email: 'tessa.tan@bellyclub.sg',
         phone: '+65 9123 4567',
-        passwordHash: hashPassword('summer123'),
+        passwordHash: hashPassword('belly123'),
         points: 420,
         tier: 'Berry Insider',
         savedAddresses: [
           {
             id: 'addr_1',
-            label: 'Home · Punggol Northshore',
-            street: '418A Northshore Drive',
-            unit: '#11-204',
-            postalCode: '821418',
+            label: 'Home · Everton Park',
+            street: '12 Everton Park',
+            unit: '#08-14',
+            postalCode: '080012',
             notes: 'Leave on shoe rack by the door',
           },
           {
             id: 'addr_2',
-            label: 'SIT Campus · Punggol Coast',
-            street: '1 Punggol Coast Road, Block E3',
-            unit: 'Level 2 Atrium',
-            postalCode: '828608',
+            label: 'Office · Tanjong Pagar',
+            street: '10 Anson Road, International Plaza',
+            unit: 'Level 14 Lobby',
+            postalCode: '079903',
             notes: 'Call upon arrival at drop-off bay',
           },
         ],
@@ -458,7 +458,7 @@ async function startServer() {
   };
 
   app.get('/api/health', (_req, res) => {
-    res.json({ ok: true, outlet: 'The Summer Açaí · Punggol Coast' });
+    res.json({ ok: true, outlet: 'BellyBelly Good' });
   });
 
   // --- Auth & Membership Endpoints ---
@@ -498,7 +498,7 @@ async function startServer() {
       });
 
       if (!member || member.passwordHash !== hashPassword(password)) {
-        res.status(401).json({ error: 'Invalid Summer Club credentials. Try Demo Member or check password.' });
+        res.status(401).json({ error: 'Invalid Belly Club credentials. Try Demo Member or check password.' });
         return;
       }
     }
@@ -543,7 +543,7 @@ async function startServer() {
       phone: cleanPhone.startsWith('+') ? cleanPhone : `+65 ${cleanPhone}`,
       passwordHash: hashPassword(password),
       points: 150, // Welcome bonus
-      tier: 'Summer Friend',
+      tier: 'Belly Friend',
       savedAddresses: [],
       joinedAt: new Date().toISOString(),
     };
@@ -613,9 +613,9 @@ async function startServer() {
 
     const normalizedPromo = (body.promoCode || '').trim().toUpperCase() || null;
     let promoDiscount = 0;
-    if (normalizedPromo === 'PUNGGOL10') {
+    if (normalizedPromo === 'BELLY10') {
       promoDiscount = Number((subtotal * 0.1).toFixed(2));
-    } else if (normalizedPromo === 'SUMMER5' && subtotal >= 25) {
+    } else if (normalizedPromo === 'BELLY5' && subtotal >= 25) {
       promoDiscount = 5.0;
     }
 
@@ -677,8 +677,8 @@ async function startServer() {
       id: orderId,
       queueNumber,
       fulfillmentMode: body.fulfillmentMode,
-      outletName: 'The Summer Açaí · Punggol Coast',
-      outletAddress: '88 Punggol Way, #01-12 Punggol Coast Mall, Singapore 829913',
+      outletName: 'BellyBelly Good',
+      outletAddress: '28 Keong Saik Road, #01-01, Singapore 089135',
       items: body.items,
       customer: {
         ...body.customer,
@@ -799,7 +799,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`The Summer Acai QSR server running on http://0.0.0.0:${PORT}`);
+    console.log(`BellyBelly Good QSR server running on http://0.0.0.0:${PORT}`);
   });
 }
 

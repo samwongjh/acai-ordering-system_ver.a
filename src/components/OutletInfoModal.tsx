@@ -33,9 +33,9 @@ export function OutletInfoModal({ open, outlet, onClose }: OutletInfoModalProps)
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold text-[#5B2378]">Outlet Details</p>
+            <p className="text-xs font-semibold text-[#5B2378]">{outlet.branch}</p>
             <h2 className="font-display text-xl font-bold text-[#1C1523]">
-              {outlet.brand} · {outlet.branch}
+              {outlet.brand}
             </h2>
           </div>
           <button
@@ -79,7 +79,7 @@ export function OutletInfoModal({ open, outlet, onClose }: OutletInfoModalProps)
         <div className="pt-3 border-t border-[#1C1523]/8 space-y-2.5">
           <h3 className="font-display text-sm font-bold text-[#1C1523] flex items-center gap-1.5">
             <Tag className="w-4 h-4 text-[#5B2378]" />
-            <span>Active Punggol Coast Promos</span>
+            <span>Active BellyBelly Good Promos</span>
           </h3>
           {outlet.activePromos.map((promo) => (
             <div

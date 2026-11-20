@@ -106,12 +106,12 @@ export function SummerClubView({
       <div className="max-w-lg mx-auto px-4 py-8 sm:py-12">
         <div className="bg-white rounded-2xl border border-[#1C1523]/10 p-6 sm:p-8 space-y-6">
           <div>
-            <p className="text-xs font-semibold text-[#5B2378]">Summer Club Membership</p>
+            <p className="text-xs font-semibold text-[#5B2378]">Belly Club Membership</p>
             <h1 className="mt-1 font-display text-2xl font-bold text-[#1C1523]">
               Earn 10 pts for every S$1 spent
             </h1>
             <p className="mt-1.5 text-sm text-[#665E6E]">
-              Sign in to redeem Summer Points (100 pts = S$1.00 off), save Punggol Coast delivery addresses, and reorder favorites in one tap.
+              Sign in to redeem Belly Points (100 pts = S$1.00 off), save your delivery addresses, and reorder favorites in one tap.
             </p>
           </div>
 
@@ -292,7 +292,7 @@ export function SummerClubView({
       <div className="bg-white rounded-2xl border border-[#1C1523]/8 p-5">
         <h2 className="font-display text-base font-bold text-[#1C1523] mb-3 flex items-center gap-2">
           <MapPin className="w-4 h-4 text-[#5B2378]" />
-          <span>Saved Punggol & Delivery Addresses</span>
+          <span>Saved Delivery Addresses</span>
         </h2>
         {member.savedAddresses.length === 0 ? (
           <p className="text-xs text-[#665E6E]">
@@ -327,7 +327,7 @@ export function SummerClubView({
           <p className="text-xs text-[#665E6E] py-4">Loading your past orders...</p>
         ) : orders.length === 0 ? (
           <p className="text-xs text-[#665E6E] py-4">
-            No orders placed yet. Your Punggol Coast orders will appear here.
+            No orders placed yet. Your BellyBelly Good orders will appear here.
           </p>
         ) : (
           <div className="divide-y divide-[#1C1523]/8">

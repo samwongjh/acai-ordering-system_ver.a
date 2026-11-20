@@ -52,7 +52,7 @@ export function OutletHeroBanner({
             <div>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#1C1523] text-balance">
-                  {outlet.brand} · {outlet.branch}
+                  {outlet.brand}
                 </h1>
                 <div className="flex items-center gap-1.5 text-sm font-medium text-[#1C1523] tabular-nums">
                   <Star className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
@@ -107,14 +107,14 @@ export function OutletHeroBanner({
                 {fulfillmentMode === 'pickup' ? (
                   <>
                     <span className="font-medium text-[#1C1523]">
-                      Express Counter #01-12 · Ready in {outlet.pickupLeadTime}
+                      Express Counter #01-01 · Ready in {outlet.pickupLeadTime}
                     </span>
                     <span className="tabular-nums">No service fee · Skip the queue</span>
                   </>
                 ) : (
                   <>
                     <span className="font-medium text-[#1C1523]">
-                      Punggol & North-East · Est. {outlet.deliveryLeadTime}
+                      Island-Wide Delivery · Est. {outlet.deliveryLeadTime}
                     </span>
                     <span className="tabular-nums">
                       S${outlet.deliveryFee.toFixed(2)} fee · Free over S$

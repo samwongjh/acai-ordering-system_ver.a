@@ -33,7 +33,7 @@ export function TopHeader({
           onClick={() => onChangeView('menu')}
           className="font-display text-lg md:text-xl font-bold tracking-tight text-[#1C1523] whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B2378] rounded-md px-1 -ml-1"
         >
-          The Summer Açaí
+          BellyBelly Good
         </button>
 
         {/* Zone 2: Clean single-line navigation links */}
@@ -72,7 +72,7 @@ export function TopHeader({
                 : 'border-transparent hover:text-[#1C1523]'
             }`}
           >
-            Summer Club
+            Belly Club
           </button>
           <button
             type="button"
@@ -112,7 +112,7 @@ export function TopHeader({
             <button
               type="button"
               onClick={member ? () => onChangeView('club') : onOpenAuthModal}
-              aria-label={member ? 'Summer Club Account' : 'Sign in'}
+              aria-label={member ? 'Belly Club Account' : 'Sign in'}
               className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl text-[#1C1523] hover:bg-[#F3EFEA] transition-colors cursor-pointer"
             >
               <User className="w-5 h-5" />

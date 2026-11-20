@@ -20,9 +20,9 @@ import { SummerClubView } from './components/SummerClubView.tsx';
 import { AuthModal } from './components/AuthModal.tsx';
 import { OutletInfoModal } from './components/OutletInfoModal.tsx';
 
-const STORAGE_CART_KEY = 'summer_acai_cart_v1';
-const STORAGE_TOKEN_KEY = 'summer_acai_token_v1';
-const STORAGE_ACTIVE_ORDER_KEY = 'summer_acai_active_order_id_v1';
+const STORAGE_CART_KEY = 'bellybelly_cart_v1';
+const STORAGE_TOKEN_KEY = 'bellybelly_token_v1';
+const STORAGE_ACTIVE_ORDER_KEY = 'bellybelly_active_order_id_v1';
 
 export default function App() {
   const [activeView, setActiveView] = useState<AppView>('menu');
@@ -345,7 +345,7 @@ export default function App() {
       {/* Quiet Desktop Footer */}
       <footer className="hidden md:block border-t border-[#1C1523]/8 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-5 flex items-center justify-between text-xs text-[#665E6E]">
-          <span>The Summer Açaí · Punggol Coast · 88 Punggol Way, #01-12</span>
+          <span>BellyBelly Good · Exclusive Flagship · 28 Keong Saik Road, #01-01</span>
           <div className="flex items-center gap-5">
             <button
               type="button"
@@ -412,7 +412,7 @@ export default function App() {
               }`}
             >
               <Award className="w-5 h-5" />
-              <span>Summer Club</span>
+              <span>Belly Club</span>
             </button>
           </nav>
         )}
